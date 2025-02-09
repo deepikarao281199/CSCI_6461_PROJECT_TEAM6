@@ -1,0 +1,51 @@
+  LOC     10          ;BEGIN AT LOCATION 10
+        Data    25         ;PUT 25 AT LOCATION 10
+        Data    7          ;PUT 7 AT LOCATION 11
+        Data    End        ;PUT 2048 AT LOCATION 12
+        Data    5         
+        Data    15        
+        Data    6         
+        Data    20        
+        Data    14        
+        LDX     3,12       ;X3 GETS 7
+        LDR     1,0,15     ;R1 GETS 15
+        LDR     2,3,10     ;R2 GETS 6
+        LDR     0,2,12,1   ;R0 GETS 20
+        LDA     2,1,1      ;R2 GETS 1 to set CONDITION CODE
+        LDX     2,10       ;X2 GETS 2048
+        SETCCE  0          ;SET CONDITION CODE FOR NOT EQUAL
+        JZ      2,5        ;JUMP TO End if CC is 1
+        LOC     2048      
+End:    HLT        
+        IN      1,7       
+        OUT     1,8       
+        CHK     3,9       
+        JCC     2,0,2     
+        TRAP    3         
+        STR     2,3,12    
+        LDA     1,3,5     
+        LDX     1,10       
+        STX     3,7       
+        JZ      1,7       
+        JNE     1,7       
+        JCC     2,1,9     
+        JMA     3,8       
+        JSR     3,7       
+        SOB     2,3,8     
+        JGE     0,2,10     
+        RFS     20        
+        AMR     3,2,9     
+        SMR     1,3,2     
+        AIR     3,5       
+        SIR     1,6       
+        MLT     1,0       
+        DVD     0,1       
+        TRR     3,2       
+        AND     1,2       
+        NOT     3         
+        ORR     0,1       
+        SRC     1,3,0,1   
+        RRC     3,5,1,0   
+        IN      3,7       
+        OUT     3,8       
+        CHK     3,9 
