@@ -1,0 +1,15 @@
+LOC 7
+Data 100
+Data 50
+Data 25
+Data 6
+Data 16
+Data 12
+LDX 1,5
+LDR 2,0,15
+LDR 2,2,10
+LDR 1,2,10,1
+LDA 0,0,0
+LDX 1,5
+JZ 0,1,5
+End: HLT
