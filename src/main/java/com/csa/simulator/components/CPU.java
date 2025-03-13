@@ -26,7 +26,7 @@ public class CPU extends Transformer {
     public char[] indexRegister1,indexRegister2,indexRegister3;
     private final Modules dev;
     /*Floating Point Registers */
-    public FloatingPointRegisters FR;
+    public FPRegisters FR;
     public Cache reserveCache;
     /**OpCode Inst*/
     public static final short HALT_OPCODE = 0x00;
@@ -90,7 +90,7 @@ public class CPU extends Transformer {
         gpr1Register = new char[16];
         gpr2Register = new char[16];
         gpr3Register = new char[16];
-        FR = new FloatingPointRegisters();
+        FR = new FPRegisters();
         programCounter = new char[12];
         conditionCodeRegister = new char[4];
         instructionRegister = new char[16];
@@ -452,7 +452,7 @@ public class CPU extends Transformer {
         short v1addr = m.data[EA];
         short v2addr = m.data[EA+1];
         System.out.println(v1addr+" "+v2addr);
-        float frVal = FloatingPointRegisters.shortToFloat(GetFloatingRegister(fx));
+        float frVal = FPRegisters.shortToFloat(GetFloatingRegister(fx));
         for(int i=0; i<(int)frVal; i++){
             m.data[v1addr+i] += m.data[v2addr+i];
             //System.out.println(m.data[v1addr+i]);
@@ -461,7 +461,7 @@ public class CPU extends Transformer {
     public void VectorSub(short fx, short EA, Memory m){
         short v1addr = m.data[EA];
         short v2addr = m.data[EA+1];
-        float frVal = FloatingPointRegisters.shortToFloat(GetFloatingRegister(fx));
+        float frVal = FPRegisters.shortToFloat(GetFloatingRegister(fx));
         for(int i=0; i<frVal; i++)
             m.data[v1addr+i] -= m.data[v2addr+i];
     }
@@ -640,7 +640,7 @@ public class CPU extends Transformer {
     }
     /**Floating Point Addition*/
     public void FloatAdd(short fx,short EA,Memory m){
-        float value = FloatingPointRegisters.shortToFloat(m.data[EA]);
+        float value = FPRegisters.shortToFloat(m.data[EA]);
         switch(fx){
             case 0:
                 float fr0 = FR.getFR0() + value;
@@ -654,7 +654,7 @@ public class CPU extends Transformer {
     }
     /**Floating Point Subtraction*/
     public void FloatSub(short fx,short EA,Memory m){
-        float value = FloatingPointRegisters.shortToFloat(m.data[EA]);
+        float value = FPRegisters.shortToFloat(m.data[EA]);
         switch(fx){
             case 0:
                 float fr0 = FR.getFR0() - value;
@@ -675,19 +675,19 @@ public class CPU extends Transformer {
                 DecimalToBinary(m.data[EA], R_x, 16);
                 break;
             case 1:
-                FR.setFR0(FloatingPointRegisters.shortToFloat(m.data[EA]));
+                FR.setFR0(FPRegisters.shortToFloat(m.data[EA]));
         }
     }
     /**Load Floating Register From Memory*/
     public void LoadFloatRegister(short fx,short EA,Memory m){
         switch(fx){
             case 0:
-                FR.setFR0(FloatingPointRegisters.shortToFloat(m.data[EA]));
-                FR.setFR1(FloatingPointRegisters.shortToFloat(m.data[EA+1]));
+                FR.setFR0(FPRegisters.shortToFloat(m.data[EA]));
+                FR.setFR1(FPRegisters.shortToFloat(m.data[EA+1]));
                 break;
             case 1:
-                FR.setFR0(FloatingPointRegisters.shortToFloat(m.data[EA+1]));
-                FR.setFR1(FloatingPointRegisters.shortToFloat(m.data[EA]));
+                FR.setFR0(FPRegisters.shortToFloat(m.data[EA+1]));
+                FR.setFR1(FPRegisters.shortToFloat(m.data[EA]));
                 break;
         }
     }

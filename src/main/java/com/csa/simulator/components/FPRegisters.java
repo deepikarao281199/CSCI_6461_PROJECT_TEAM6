@@ -1,6 +1,6 @@
 package com.csa.simulator.components;
 
-public class FloatingPointRegisters {
+public class FPRegisters {
 
     public short FR0;
     public short FR1;
