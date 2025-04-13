@@ -19,7 +19,7 @@ import java.util.stream.IntStream;
  */
 public class GUI extends JFrame {
     private JTextArea textField, textField2;
-    private JLabel[] gpr0RegisterArr,gpr1RegisterArr, gpr2RegisterArr, gpr3RegisterArr, pcLabels, marLabels, mbrLabels, mfrLabels, irLabels;
+    private JLabel[] gpr0Arr, gpr1Arr, gpr2Arr, gpr3Arr, pcLabels, marLabels, mbrLabels, mfrLabels, irLabels;
     private JLabel[][] ixrLabels;
     private JLabel haltLabel;
     private JLabel runLabel;
@@ -30,6 +30,8 @@ public class GUI extends JFrame {
     private Modules devices;
     char[] switchArray;
     boolean isProgram1Loaded = false;
+    boolean isProgram2Loaded = false;
+    String program2Paragraph = "";
 
     /**
      * Start position for vertical alignment
@@ -51,10 +53,10 @@ public class GUI extends JFrame {
         switchArray = new char[16];
         Arrays.fill(switchArray, (char) 0);
         loadButtons = new JButton[10];
-        gpr0RegisterArr = new JLabel[16];
-        gpr1RegisterArr = new JLabel[16];
-        gpr2RegisterArr = new JLabel[16];
-        gpr3RegisterArr = new JLabel[16];
+        gpr0Arr = new JLabel[16];
+        gpr1Arr = new JLabel[16];
+        gpr2Arr = new JLabel[16];
+        gpr3Arr = new JLabel[16];
         mbrLabels = new JLabel[16];
         irLabels = new JLabel[16];
         ixrLabels = new JLabel[3][16]; // 3 rows for IXRs, each with 16 labels
@@ -121,8 +123,8 @@ public class GUI extends JFrame {
      * Creates and adds register labels such as GPR, IXR, MBR, etc.
      */
     private void createAndAddRegisters() {
-        JLabel programCounter = new JLabel("PC"), memoryAddressRegister = new JLabel("MAR"), memoryBufferRegister = new JLabel("MBR"), instructionRegister = new JLabel("IR"), memoryFaultRegister = new JLabel("MFR");
-        JLabel[] registerLabels = {programCounter, memoryAddressRegister, memoryBufferRegister, instructionRegister, memoryFaultRegister};
+        JLabel PC = new JLabel("PC"), MAR = new JLabel("MAR"), MBR = new JLabel("MBR"), IR = new JLabel("IR"), MFR = new JLabel("MFR");
+        JLabel[] registerLabels = {PC, MAR, MBR, IR, MFR};
 
         // Setting bounds and fonts for all register labels
         int[] yPositions = {0, 30, 60, 90, 120};
@@ -172,10 +174,10 @@ public class GUI extends JFrame {
      */
     private void addLabelArrays() {
         for (int i = 0; i < 16; i++) {
-            gpr0RegisterArr[i] = createLabel(80 + (i * 25), start);
-            gpr1RegisterArr[i] = createLabel(80 + (i * 25), start + 30);
-            gpr2RegisterArr[i] = createLabel(80 + (i * 25), start + 60);
-            gpr3RegisterArr[i] = createLabel(80 + (i * 25), start + 90);
+            gpr0Arr[i] = createLabel(80 + (i * 25), start);
+            gpr1Arr[i] = createLabel(80 + (i * 25), start + 30);
+            gpr2Arr[i] = createLabel(80 + (i * 25), start + 60);
+            gpr3Arr[i] = createLabel(80 + (i * 25), start + 90);
 
             ixrLabels[0][i] = createLabel(80 + (i * 25), start + 140);
             ixrLabels[1][i] = createLabel(80 + (i * 25), start + 170);
@@ -184,10 +186,10 @@ public class GUI extends JFrame {
             mbrLabels[i] = createLabel(600 + (i * 25), start + 60);
             irLabels[i] = createLabel(600 + (i * 25), start + 90);
 
-            this.add(gpr0RegisterArr[i]);
-            this.add(gpr1RegisterArr[i]);
-            this.add(gpr2RegisterArr[i]);
-            this.add(gpr3RegisterArr[i]);
+            this.add(gpr0Arr[i]);
+            this.add(gpr1Arr[i]);
+            this.add(gpr2Arr[i]);
+            this.add(gpr3Arr[i]);
             this.add(ixrLabels[0][i]);
             this.add(ixrLabels[1][i]);
             this.add(ixrLabels[2][i]);
@@ -288,6 +290,7 @@ public class GUI extends JFrame {
 
     /**
      * Constructor for GUI class.
+     *
      * @throws NullPointerException if any of the components are null.
      */
     public GUI() throws NullPointerException {
@@ -331,10 +334,10 @@ public class GUI extends JFrame {
 
         // Map of keystrokes to CPU register arrays and ranges
         Map<Integer, LEDUpdater> updaterMap = Map.of(
-                0, new LEDUpdater(cpu.gpr0Register, gpr0RegisterArr, 16),
-                1, new LEDUpdater(cpu.gpr1Register, gpr1RegisterArr, 16),
-                2, new LEDUpdater(cpu.gpr2Register, gpr2RegisterArr, 16),
-                3, new LEDUpdater(cpu.gpr3Register, gpr3RegisterArr, 16),
+                0, new LEDUpdater(cpu.gpr0Register, gpr0Arr, 16),
+                1, new LEDUpdater(cpu.gpr1Register, gpr1Arr, 16),
+                2, new LEDUpdater(cpu.gpr2Register, gpr2Arr, 16),
+                3, new LEDUpdater(cpu.gpr3Register, gpr3Arr, 16),
                 4, new LEDUpdater(cpu.indexRegister1, ixrLabels[0], 16),
                 5, new LEDUpdater(cpu.indexRegister2, ixrLabels[1], 16),
                 6, new LEDUpdater(cpu.indexRegister3, ixrLabels[2], 16),
@@ -346,13 +349,13 @@ public class GUI extends JFrame {
             updaterMap.get(onKeyStroke).updateLEDs(isTurnedOn, isTurnedOff);
         } else {
             switch (onKeyStroke) {
-                case 7: // Special case for programCounter
+                case 7: // Special case for PC
                     updateSpecialLEDs(cpu.programCounter, pcLabels, 12, Color.yellow, isTurnedOff);
                     break;
-                case 8: // Special case for memoryAddressRegister
+                case 8: // Special case for MAR
                     updateSpecialLEDs(cpu.memoryAddressRegister, marLabels, 12, Color.orange, isTurnedOff);
                     break;
-                case 11: // Special case for memoryFaultRegister
+                case 11: // Special case for MFR
                     updateSpecialLEDs(cpu.memoryFaultRegister, mfrLabels, 4, Color.red, isTurnedOff);
                     break;
                 default:
@@ -413,7 +416,8 @@ public class GUI extends JFrame {
             );
 
             // Perform the corresponding action
-            buttonActionMap.getOrDefault(buttonPress, arr -> {}).accept(switchArray);
+            buttonActionMap.getOrDefault(buttonPress, arr -> {
+            }).accept(switchArray);
 
             // Refresh the LEDs
             refreshLEDs(buttonPress);
@@ -422,6 +426,7 @@ public class GUI extends JFrame {
 
     /**
      * Method to switch the action of the button.
+     *
      * @param e ActionEvent object
      */
     private void switchAction(ActionEvent e) {
@@ -440,6 +445,7 @@ public class GUI extends JFrame {
 
     /**
      * Method to store the memory.
+     *
      * @param e ActionEvent object
      */
     private void Store(ActionEvent e) {
@@ -462,6 +468,7 @@ public class GUI extends JFrame {
 
     /**
      * Method to store the memory and print to the screen that the store was successful.
+     *
      * @param e ActionEvent object
      */
     private void StorePlus(ActionEvent e) {
@@ -492,6 +499,7 @@ public class GUI extends JFrame {
 
     /**
      * Method to load the value from the memory.
+     *
      * @param e ActionEvent object
      */
     private void LoadValue(ActionEvent e) {
@@ -510,6 +518,7 @@ public class GUI extends JFrame {
 
     /**
      * Method to load the file.
+     *
      * @param e ActionEvent object
      */
     private void loadFile(ActionEvent e) {
@@ -520,19 +529,42 @@ public class GUI extends JFrame {
             file = new File(fCh.getSelectedFile().getAbsolutePath());
             String filename = file.getAbsolutePath();
             String[] fullLocation = filename.split("/");
-            filename=file.getName();
-
-            if(Objects.equals(filename, "Program1.txt")){
+            filename = file.getName();
+            if (Objects.equals(filename, "Program1.txt")) {
+                if (isProgram2Loaded) {
+                    JOptionPane.showMessageDialog(this, "Program2.txt is already loaded. Please run the program first", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 isProgram1Loaded = true;
                 textField2.setText("Enter 20 numbers to find the nearest number:");
+                JOptionPane.showMessageDialog(this, filename, "File Load Successful", JOptionPane.PLAIN_MESSAGE);
+                try {
+                    cpu.setprogramCounter((short) 48);
+                    refreshLEDs(7);
+                    ProcessFile();
+                } catch (FileNotFoundException fileNotFoundException) {
+                    System.out.println(fileNotFoundException.getMessage());
+                }
             }
-            JOptionPane.showMessageDialog(this, filename, "File Load Successful", JOptionPane.PLAIN_MESSAGE);
-            try {
-                cpu.setprogramCounter((short) 48);
-                refreshLEDs(7);
-                ProcessFile();
-            } catch (FileNotFoundException fileNotFoundException) {
-                System.out.println(fileNotFoundException.getMessage());
+            if (Objects.equals(filename, "Program2.txt")) {
+                if (isProgram1Loaded) {
+                    JOptionPane.showMessageDialog(this, "Program1.txt is already loaded. Please run the program first", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                isProgram2Loaded = true;
+                JOptionPane.showMessageDialog(this, filename, "File Load Successful", JOptionPane.PLAIN_MESSAGE);
+                try {
+                    ProcessFile();
+                    ProcessFile2();
+                } catch (FileNotFoundException fileNotFoundException) {
+                    System.out.println(fileNotFoundException.getMessage());
+                }
+                String[] sentences = program2Paragraph.split("\\.\\s*");
+                textField2.setText("The sentences in the paragraph are:");
+                for (int i = 0; i < sentences.length; i++) {
+                    textField2.setText(textField2.getText() + "\n" + (i + 1) + ": " + sentences[i]);
+                }
+                textField2.setText(textField2.getText() + "\n" + "Enter the word :");
             }
         }
     }
@@ -552,6 +584,79 @@ public class GUI extends JFrame {
             System.out.println(hexloc + " " + hexval);
         }
         s.close();
+    }
+    /**
+     * Method to process the file.
+     * @throws FileNotFoundException if the file is not found
+     */
+    private void ProcessFile2() throws FileNotFoundException {
+        File para = new File("Paragraph.txt");
+        Scanner fileScanner = new Scanner(para);
+        StringBuilder paragraphBuilder = new StringBuilder();
+        while (fileScanner.hasNextLine()) {
+            paragraphBuilder.append(fileScanner.nextLine()).append(" ");
+        }
+        fileScanner.close();
+        program2Paragraph = paragraphBuilder.toString().trim();
+    }
+    private void program1() {
+        NumbersList.add(Integer.parseInt(textField.getText()));
+        textField2.setText(textField2.getText()+"\n"+textField.getText());
+        textField.setText("");
+
+        if(NumbersList.size() == 20){
+            String userInput = JOptionPane.showInputDialog(null, "Enter any number to find closest", "", JOptionPane.QUESTION_MESSAGE);
+            textField.setText(userInput);
+
+            int nearestNumber = NumbersList.getFirst();
+            int minDifference = Math.abs(nearestNumber - Integer.parseInt(userInput));
+
+            for (int number : NumbersList) {
+                int difference = Math.abs((number - Integer.parseInt(userInput)));
+                if (difference < minDifference) {
+                    minDifference = difference;
+                    nearestNumber = number;
+                }
+            }
+            textField2.setText(textField2.getText()+"\nNearest number:"+ nearestNumber +"\n***********************");
+            NumbersList = new ArrayList<>();
+            isProgram1Loaded=false;
+        }
+    }
+
+
+    private void program2() {
+        String[] sentences = program2Paragraph.split("\\.\\s*");
+        String word = textField.getText();
+        textField2.setText(textField2.getText()+"\n"+word);
+        boolean found = false;
+        for (int i = 0; i < sentences.length; i++) {
+            String[] words = sentences[i].split("\\s+");
+            for (int j = 0; j < words.length; j++) {
+                if (words[j].replaceAll("[^a-zA-Z]", "").equalsIgnoreCase(word)) {
+                    textField2.setText(textField2.getText()+"\n"+"Found the word \"" + word + "\" in sentence " + (i + 1) +
+                            ", word number " + (j + 1));
+                    found = true;
+                }
+            }
+        }
+
+        if (!found) {
+            textField2.setText(textField2.getText()+"\n"+"The word \"" + word + "\" was not found in the paragraph.");
+        }
+        textField2.setText(textField2.getText()+"\n*********************************************************************");
+        isProgram2Loaded=false;
+    }
+
+    private void takeInput(ActionEvent e) throws IOException {
+        if(isProgram1Loaded) {
+            program1();
+        } else if(isProgram2Loaded) {
+            program2();
+        } else {
+            JOptionPane.showMessageDialog(null,"Please load Program1.txt or Program2.txt first","Error",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
     }
 
     /**
@@ -626,40 +731,12 @@ public class GUI extends JFrame {
         this.setVisible(true);
     }
 
-    private void takeInput(ActionEvent e) throws IOException {
-        if(!isProgram1Loaded) {
-            JOptionPane.showMessageDialog(null,"Please load Program1.txt first","Error",JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        NumbersList.add(Integer.parseInt(textField.getText()));
-        textField2.setText(textField2.getText()+"\n"+textField.getText());
-        textField.setText("");
-
-        if(NumbersList.size() == 20){
-            String userInput = JOptionPane.showInputDialog(null, "Enter any number to find closest", "", JOptionPane.QUESTION_MESSAGE);
-            textField.setText(userInput);
-
-            int nearestNumber = NumbersList.getFirst();
-            int minDifference = Math.abs(nearestNumber - Integer.parseInt(userInput));
-
-            for (int number : NumbersList) {
-                int difference = Math.abs((number - Integer.parseInt(userInput)));
-                if (difference < minDifference) {
-                    minDifference = difference;
-                    nearestNumber = number;
-                }
-            }
-            textField2.setText(textField2.getText()+"\nNearest number:"+Integer.toString(nearestNumber)+"\n***********************");
-            NumbersList = new ArrayList<Integer>();
-        }
-
-    }
 
     /**
      * Method to load the GUI.
      */
     public void loadGui() {
-        JLabel title = new JLabel("CSCI 6461 Simulator");
+        JLabel title = new JLabel("CSA Simulator");
         title.setFont(new Font("Arial", Font.BOLD, 60));
         title.setBounds(580, 50, 600, 50);
         this.add(title);

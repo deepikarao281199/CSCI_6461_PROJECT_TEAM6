@@ -1,0 +1,9 @@
+You should design a user interface that simulates the console of the CS6461 Computer.
+The UI should include both the console plus some additional capabilities to support the
+debugging of your simulator. I will give you some examples of consoles in a later lecture.
+Remember that later phases will add more instructions and more complexity to the
+computer system and will result in additional displays and switches on your operator
+console. So, plan accordingly and allow some growth space as you make your initial
+design.
+You should consider displaying registers which are not programmer-accessible, but are
+required for correct operation of the computer (and your simulator).
